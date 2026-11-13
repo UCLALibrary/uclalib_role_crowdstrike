@@ -1,3 +1,46 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: BSD-3-Clause
 ---
-# tasks file for uclalib_role_crowdstrike
+
+- name: Install CrowdStrike Falcon
+  ansible.builtin.package:
+    name: falcon-sensor
+    state: present
+
+- name: Configure CrowdStrike Falcon
+  ansible.builtin.command: >
+    /opt/CrowdStrike/falconctl -s
+    {% if crowdstrike_force_update | bool %}
+      -f
+    {% endif %}
+    {% if crowdstrike_cid | length > 0 %}
+      --cid={{ crowdstrike_cid }}
+    {% endif %}
+    {% if crowdstrike_cloud | length > 0 %}
+      --cloud={{ crowdstrike_cloud }}
+     {% endif %}
+     {% if crowdstrike_provisioning_token | length > 0 %}
+       --provisioning-token={{ crowdstrike_provisioning_token }}
+     {% endif %}
+  when: >
+    crowdstrike_cid | length > 0
+    or
+    crowdstrike_cloud | length > 0
+    or
+    crowdstrike_provisioning_token | length > 0
+  changed_when: true # if the command succeeded, a change took place
+  tags: ag
+
+- name: Get CID
+  ansible.builtin.command: >
+    echo
+    /opt/CrowdStrike/falconctl -g --cid
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: crowdstrike_set_cid
+
+- name: Start falcon-sensor Service
+  ansible.builtin.service:
+    name: falcon-service
+    state: started
+  when: crowdstrike_set_cid.rc == 0
