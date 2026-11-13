@@ -1,3 +1,7 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: BSD-3-Clause
 ---
-# defaults file for uclalib_role_crowdstrike
+
+crowdstrike_cid: ''
+crowdstrike_cloud: ''
+crowdstrike_provisioning_token: ''
+crowdstrike_force_update: false
