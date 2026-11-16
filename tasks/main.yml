@@ -28,11 +28,9 @@
     or
     crowdstrike_provisioning_token | length > 0
   changed_when: true # if the command succeeded, a change took place
-  tags: ag
 
 - name: Get CID
   ansible.builtin.command: >
-    echo
     /opt/CrowdStrike/falconctl -g --cid
   failed_when: false
   changed_when: false
