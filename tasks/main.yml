@@ -39,6 +39,6 @@
 
 - name: Start falcon-sensor Service
   ansible.builtin.service:
-    name: falcon-service
+    name: falcon-sensor
     state: started
   when: crowdstrike_set_cid.rc == 0
